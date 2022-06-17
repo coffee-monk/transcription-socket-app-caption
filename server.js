@@ -82,16 +82,14 @@ io.on("connection", socket => {
 
       const { textRaw, textScroll, textCaption, textWord } = getRoomText(room)
 
-      // update editor textarea
-      socket.to(room).emit("textarea:update", {
-        textRaw,
-      })
+      // // update editor textarea
+      // socket.to(room).emit("textarea:update", {
+      //   textRaw,
+      // })
 
-      // emit processed text for viewing
+      // emit processed caption text for viewing
       socket.to(room).emit("text:view", {
-        textScroll,
         textCaption,
-        textWord,
       })
     }
   })
