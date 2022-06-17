@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      #container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100vw;
+        height: 100vh;
+      }
+
+      #form {
+        margin: 2rem;
+      }
+
+      #form input {
+        padding: 1rem;
+        border-radius: 15px;
+        border: 2px solid dodgerblue;
+        font-size: 1rem;
+      }
+
+      #form input:focus {
+        outline: none;
+        padding: 1rem;
+        border-radius: 15px;
+        border-color: dodgerblue;
+      }
+
+      #form button {
+        padding: 1rem;
+        border-radius: 15px;
+        border: 2px solid dodgerblue;
+        background-color: dodgerblue;
+        color: white;
+        font-size: 1rem;
+      }
+
+      #form button:hover {
+        background-color: deepskyblue;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <h1 style="margin-top: 0px">SCRIBITZ</h1>
+      <h2>Real-Time Transcription for Live Events</h2>
+      <br />
+      <form id="form" action="/editor" method="POST">
+        <input name="room" placeholder="Room Name" type="text" required />
+        <button type="submit">Create Room</button>
+      </form>
+    </div>
+  </body>
+</html>

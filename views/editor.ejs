@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="/socket.io/socket.io.js"></script>
+    <script
+      src="https://kit.fontawesome.com/ded54701a7.js"
+      crossorigin="anonymous"
+    ></script>
+    <style>
+      #nav {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+        background-color: black;
+        color: white;
+      }
+
+      #roomInfo {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 1.25rem;
+      }
+
+      #roomInfo > div {
+        padding-left: 2rem;
+      }
+
+      #textarea-container {
+        flex-grow: 1;
+        resize: horizontal;
+        overflow: hidden;
+      }
+
+      #textarea-border {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        margin: 1rem auto;
+        width: calc(100% - 2rem);
+        height: calc(100% - 2rem);
+        border: 3px solid grey;
+      }
+
+      #textarea {
+        width: calc(100% - 1.5rem);
+        height: calc(100% - 1.5rem);
+        margin: auto;
+        font-family: Arial;
+        font-size: 1rem;
+        outline: none;
+        border: none;
+        color: grey;
+        resize: none;
+      }
+
+      #textarea-border:focus-within {
+        border: 3px solid dodgerblue;
+      }
+
+      #textarea:focus {
+        color: black;
+      }
+
+      #textarea::-webkit-scrollbar {
+        width: 16px;
+        padding-right: 0px;
+      }
+
+      #textarea::-webkit-scrollbar-thumb {
+        background-color: lightgrey;
+        border-radius: 15px;
+        border: 3px solid white;
+        z-index: -1;
+      }
+
+      #textarea::-webkit-scrollbar-thumb:hover {
+        background-color: darkgray;
+      }
+
+      .btn {
+        padding: 0.5rem;
+        border-radius: 15px;
+        background-color: dodgerblue;
+        color: white;
+      }
+
+      .btn:hover {
+        background-color: deepskyblue;
+      }
+
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+
+      .dropdown {
+        position: relative;
+        display: inline-block;
+      }
+
+      .drop-btn {
+        padding: 0.5rem;
+        border: 2px solid white;
+        margin: 0px;
+      }
+
+      .dropdown-content {
+        display: none;
+        position: absolute;
+        left: 0px;
+        width: 100%;
+        background-color: black;
+        text-align: center;
+      }
+
+      .dropdown-content a {
+        display: block;
+        padding: 1.5rem;
+        border-bottom: 1px solid white;
+      }
+
+      .dropdown-content a:hover {
+        display: block;
+        padding: 1.5rem;
+        border-bottom: 1px solid white;
+        background-color: #222222;
+      }
+
+      .dropdown:hover .dropdown-content {
+        display: block;
+      }
+
+      #flex-column {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .fa-solid {
+        color: white;
+      }
+
+      .flex-row {
+        display: flex;
+      }
+
+      @media (min-width: 801px) {
+        #textarea-container {
+          width: 600px;
+          margin: auto;
+        }
+      }
+    </style>
+  </head>
+  <body id="flex-column">
+    <div id="nav">
+      <div class="flex-row">
+        <a href="<%= roomURL %>" target="_blank" rel="noopener noreferrer">
+          <h3 class="btn">New Room</h3>
+        </a>
+        <div id="roomInfo">
+          <div id="roomName">
+            <i class="fa-solid fa-user-pen"></i>
+          </div>
+          <div id="editorsNumber">
+            <i class="fa-solid fa-user-pen"></i>
+          </div>
+          <div id="viewersNumber">
+            <i class="fa-solid fa-users"></i>
+          </div>
+        </div>
+      </div>
+      <div class="dropdown">
+        <a href="<%= scrollURL %>" target="_blank" rel="noopener noreferrer">
+          <h3 class="drop-btn">
+            Captions <i class="fa-solid fa-angle-down"></i>
+          </h3>
+        </a>
+        <div class="dropdown-content">
+          <a href="<%= scrollURL %>" target="_blank" rel="noopener noreferrer"
+            >Page</a
+          >
+          <a href="<%= captionURL %>" target="_blank" rel="noopener noreferrer"
+            >Lines</a
+          >
+          <a href="<%= wordURL %>" target="_blank" rel="noopener noreferrer"
+            >Word</a
+          >
+        </div>
+      </div>
+    </div>
+
+    <div id="textarea-container">
+      <div id="textarea-border">
+        <textarea id="textarea" placeholder="Type to Share Live-Captions">
+<%- textLoad %></textarea
+        >
+      </div>
+    </div>
+
+    <script>
+      let room = "<%= room %>"
+      let textarea = document.querySelector("#textarea")
+      let editorsNumber = document.querySelector("#editorsNumber")
+      let viewersNumber = document.querySelector("#viewersNumber")
+      let roomName = document.querySelector("#roomName")
+
+      const socket = io.connect({
+        query: {
+          room: room,
+          type: "editor",
+        },
+      })
+
+      textarea.addEventListener("keyup", e => {
+        socket.emit("text:edit", {
+          text: textarea.value,
+          room,
+        })
+      })
+
+      socket.on("dashboard", ({ room, editorsLength, viewersLength }) => {
+        roomName.innerHTML = "<i class='fa-solid fa-globe'></i> " + room
+        editorsNumber.innerHTML =
+          "<i class='fa-solid fa-user-pen'></i> " + editorsLength
+        viewersNumber.innerHTML =
+          "<i class='fa-solid fa-users'></i> " + viewersLength
+      })
+
+      socket.on("textarea:update", ({ textRaw }) => {
+        textarea.value = ""
+        textarea.value = textRaw
+      })
+    </script>
+  </body>
+</html>

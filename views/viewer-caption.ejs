@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="/socket.io/socket.io.js"></script>
+    <style>
+      body {
+        background-color: black;
+        color: seashell;
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      #caption {
+        font-family: "Arial", "Helvetica";
+        font-size: 2rem;
+        padding: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <br />
+    <h3 id="caption"><%- textLoad %></h3>
+    <script>
+      const room = "<%= room %>"
+      const textOutput = document.querySelector("#caption")
+
+      /*
+      setInterval(() => {
+        console.log("width: " + window.innerWidth)
+        console.log("height: " + window.innerHeight)
+      }, 1500)
+      */
+
+      // Socket Communications
+      let socket = io.connect({
+        query: {
+          room: room,
+          type: "viewer",
+        },
+      })
+
+      socket.on("text:view", ({ textCaption }) => {
+        textOutput.innerHTML = ""
+        textOutput.innerHTML = textCaption
+      })
+
+      // alert user if connection is lost
+      socket.on("disconnect", () => {
+        alert("No Connection to Server: Reload Page & Check Room-Name")
+      })
+    </script>
+  </body>
+</html>
