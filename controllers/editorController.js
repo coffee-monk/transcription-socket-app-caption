@@ -8,6 +8,7 @@ const editor_index = (req, res) => {
   res.render("editor", {
     room: room,
     roomURL: req.protocol + "://" + req.get("host"),
+    viewerURL: req.protocol + "://" + req.get("host") + "/viewer/" + room,
     scrollURL: req.protocol + "://" + req.get("host") + "/viewer/" + room,
     captionURL:
       req.protocol + "://" + req.get("host") + "/viewer/caption/" + room,
